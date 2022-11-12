@@ -1,0 +1,71 @@
+﻿@model IEnumerable<TMS.VMs.COAVM>
+
+@{
+    ViewData["Title"] = "Chart of Accounts";
+    Layout = "_LayoutPrint";
+}
+<div class="row">
+    <div class="col-md-12">
+        <h4 class="text-center">@ViewData["Title"]</h4>
+    </div>
+    <div class="col-md-6">
+        
+    </div>
+    <div class="col-md-6">
+        
+    </div>
+    <div class="col-md-12">
+        @if (Model.FirstOrDefault() != null)
+        {
+            <table class="table table-bordered">
+                @foreach (var item in Model)
+                {
+                    if (item.IsCTLChanged)
+                    {
+                        <tr>
+                            <th>A/C Head</th>
+                            <th colspan="3"> @item.CTLCode  -  @item.CTL </th>
+                        </tr>
+                        @foreach (var item2 in Model.Where(a => a.CTLCode == item.CTLCode))
+                        {
+                            if (item2.IsGALChanged)
+                            {
+                                <tr>
+                                    <th></th>
+                                    <th>A/C Sub Head</th>
+                                    <th colspan="2"> @item2.GALCode  -  @item2.GAL </th>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th>A/C Code</th>
+                                    <th>A/C Title</th>
+                                </tr>
+                                @foreach (var item3 in Model.Where(a => a.GALCode == item2.GALCode))
+                                {
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td>@item3.AccCode</td>
+                                        <td>@item3.Acc</td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    }
+                }
+            </table>
+        }
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        var error = '@ViewBag.Error';
+        $('document').ready(function () {
+            if (error != '') {
+                DisplayError(error);
+            }
+        })
+    </script>
+}

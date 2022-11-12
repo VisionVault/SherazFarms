@@ -1,0 +1,91 @@
+﻿@model IEnumerable<TMS.VMs.RPTStockVM>
+
+@{
+    ViewData["Title"] = "Stock";
+    Layout = "_LayoutPrint";
+    int sr = 0;
+    double totalValue = 0;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h4 class="text-center">@ViewData["Title"]</h4>
+    </div>
+    <div class="col-md-6">
+        
+    </div>
+    <div class="col-md-6">
+        <h5 class="text-right">@ViewBag.DateRange</h5>
+    </div>
+    <div class="col-md-12">
+        <table id="myTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width: 8.33%">Sr</th>
+                    <th style="width: 8.33%">Category</th>
+                    <th style="width: 33.33%">Product</th>
+                    <th class="text-center" style="width: 8.33%">Opening</th>
+                    <th class="text-center" style="width: 8.33%">IN</th>
+                    <th class="text-center" style="width: 8.33%">OUT</th>
+                    <th class="text-center" style="width: 8.33%">Closing</th>
+                    <th class="text-center" style="width: 8.33%">Cost</th>
+                    <th class="text-center" style="width: 8.33%">Value</th>
+                </tr>
+            </thead>
+            <tbody id="tBody">
+                @if (Model.FirstOrDefault() == null)
+                {
+                    <tr>
+                        <th colspan="9" class="text-center">No data found</th>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        sr += 1;
+                        totalValue += item.Value;
+                        <tr>
+                            <td class="text-center">@sr</td>
+                            <td>@item.Category</td>
+                            <td>@item.Product</td>
+                            <td class="text-center">@(string.Format("{0:n0}", item.Opening))</td>
+                            <td class="text-center">@(string.Format("{0:n0}", item.INQty))</td>
+                            <td class="text-center">@(string.Format("{0:n0}", item.OUTQty))</td>
+                            <td class="text-center">@(string.Format("{0:n0}", item.Closing))</td>
+                            <td class="text-center">@(string.Format("{0:n0}", item.Cost))</td>
+                            <td class="text-center">@(string.Format("{0:n0}", item.Value))</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+            <tfoot id="tFoot">
+                @if (Model.FirstOrDefault() != null)
+                {
+                    <tr>
+                        <th colspan="3"></th>
+                        <th class="text-center">@(string.Format("{0:n0}", Model.Sum(a => a.Opening)))</th>
+                        <th class="text-center">@(string.Format("{0:n0}", Model.Sum(a => a.INQty)))</th>
+                        <th class="text-center">@(string.Format("{0:n0}", Model.Sum(a => a.OUTQty)))</th>
+                        <th class="text-center">@(string.Format("{0:n0}", Model.Sum(a => a.Closing)))</th>
+                        <th class="text-center"></th>
+                        <th class="text-center">@(string.Format("{0:n0}", totalValue))</th>
+                    </tr>
+                }
+            </tfoot>
+        </table>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        var error = '@ViewBag.Error';
+        $('document').ready(function () {
+            if (error != null || error != '') {
+                DisplayError(error);
+            }
+        })
+    </script>
+}
+
+
+

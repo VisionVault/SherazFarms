@@ -1,0 +1,242 @@
+﻿@using TMS.Data
+@using Microsoft.AspNetCore.Identity
+@inject TMSContext context
+@inject UserManager<User> usrMgr
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @(SysAcc.GetTF(context, usrMgr.GetUserId(User)) == null ? "" : SysAcc.GetTF(context, usrMgr.GetUserId(User)).Name)</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+    <link rel="stylesheet" href="~/lib/mmenu/css/mmenu.css" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        :root {
+            --mm-sidebar-expanded-size: 260px !important;
+        }
+
+        .mm-menu {
+            --mm-listitem-size: 30px;
+            --mm-navbar-size: 30px;
+        }
+
+        @@media (min-width: 992px) {
+            .header a {
+                display: none;
+            }
+        }
+
+        .mm-navbar_tabs span {
+            display: inline-block;
+            margin-left: 8px;
+        }
+
+        @@media (max-width: 450px) {
+            .mm-navbar_tabs span {
+                display: none;
+            }
+        }
+
+        @@media only screen and (max-width: 450px) {
+            .lds-facebook {
+                left: 40%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="page">
+        <div class="loader">
+            <div class="lds-facebook">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <div class="header">
+            <a href="#menu">
+                <span>
+                    <i class="fas fa-bars fa-2x"></i>
+                </span>
+            </a>
+            <div class="heading text-center">
+                <h3>@ViewData["Title"]</h3>
+            </div>
+            <nav id="menu">
+                <div id="panel-menu">
+                    <ul>
+                        <li><a asp-action="Index" asp-controller="Home"><i class="fas fa-home"></i> Home</a></li>
+                        <li>
+                            <span><i class="fas fa-user"></i> Chart of Accounts</span>
+                            <ul>
+                                <li><a asp-action="Index" asp-controller="FSL"><i></i> FSL</a></li>
+                                <li><a asp-action="Index" asp-controller="CTL"><i></i> CTL</a></li>
+                                <li><a asp-action="Index" asp-controller="GAL"><i></i> GAL</a></li>
+                                <li><a asp-action="Index" asp-controller="Accounts"><i></i> Accounts</a></li>
+                                <li><a asp-action="Index" asp-controller="Customer"><i></i> Customers</a></li>
+                                <li><a asp-action="Index" asp-controller="Supplier"><i></i> Suppliers</a></li>
+                                <li><a asp-action="Index" asp-controller="City"><i></i> Cities</a></li>
+                            </ul>
+                        </li>
+                        <li><a asp-action="Index" asp-controller="Product"><i class="fas fa-file-invoice"></i> Products</a></li>
+                        @*<li><a asp-action="Index" asp-controller="CustomerCar"><i class="fas fa-car"></i> Customer Cars</a></li>*@
+                        <li><a asp-action="Add" asp-controller="Purchase"><i class="fas fa-file-invoice"></i> Purchase</a></li>
+                        <li><a asp-action="Add" asp-controller="PurchaseReturn"><i class="fas fa-file-invoice"></i> Purchase Return</a></li>
+                        <li><a asp-action="Add" asp-controller="Sale"><i class="fas fa-file-invoice"></i> Sale</a></li>
+                        <li><a asp-action="Add" asp-controller="SaleReturn"><i class="fas fa-file-invoice"></i> Sale Return</a></li>
+                        <li><a asp-action="Add" asp-controller="ST"><i class="fas fa-file-invoice"></i> Stock Transfer</a></li>
+                        <li>
+                            <span><i class="fas fa-user"></i> Vouchers</span>
+                            <ul>
+                                <li><a asp-action="Index" asp-controller="CashIn"><i class="fa fa-dollar"></i> Cash Receipt</a></li>
+                                <li><a asp-action="Index" asp-controller="CashOut"><i class="fa fa-dollar"></i> Cash Payment</a></li>
+                                <li><a asp-action="Index" asp-controller="BankIn"><i class="fa fa-dollar"></i> Bank Receipt</a></li>
+                                <li><a asp-action="Index" asp-controller="BankOut"><i class="fa fa-dollar"></i> Bank Payment</a></li>
+                                <li><a asp-action="Index" asp-controller="JV"><i class="fa fa-dollar"></i> Journal Voucher</a></li>
+                                @*<li><a asp-action="Index" asp-controller="CV"><i class="fa fa-dollar"></i> Compound Voucher</a></li>*@
+                            </ul>
+                        </li>
+                        <li>
+                            <span><i class="fas fa-file-invoice"></i> Reports</span>
+                            <ul>
+                                <li>
+                                    <span><i class="fas fa-file-invoice"></i> Accounts</span>
+                                    <ul>
+                                        <li><a target="_blank" asp-action="COA" asp-controller="Accounts">Chart of Accounts</a></li>
+                                        <li><a asp-action="Index" asp-controller="Reports" asp-route-type="Ledger">Ledger</a></li>
+                                        <li><a asp-action="Index" asp-controller="Reports" asp-route-type="Receiveables">Receiveables</a></li>
+                                        <li><a asp-action="Index" asp-controller="Reports" asp-route-type="Payables">Payables</a></li>
+                                        <li><a asp-action="Index" asp-controller="Reports" asp-route-type="CashBook">Cash Book</a></li>
+                                        <li><a asp-action="Index" asp-controller="Reports" asp-route-type="BankBook">Bank Book</a></li>
+                                        <li><a asp-action="Index" asp-controller="Reports" asp-route-type="PL">Profit and Loss</a></li>
+                                        <li><a asp-action="Index" asp-controller="Reports" asp-route-type="Trial">Trial Balance</a></li>
+                                        <li><a asp-action="Index" asp-controller="Reports" asp-route-type="Balance Sheet">Balance Sheet</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <span><i class="fas fa-file-invoice"></i> Stocks</span>
+                                    <ul>
+                                        <li><a asp-action="Index" asp-controller="Reports" asp-route-type="Stock">Stock</a></li>
+                                        <li><a asp-action="Index" asp-controller="Reports" asp-route-type="Purchase">Purchase</a></li>
+                                        <li><a asp-action="Index" asp-controller="Reports" asp-route-type="PurchaseReturn">Purchase Return</a></li>
+                                        <li><a asp-action="Index" asp-controller="Reports" asp-route-type="Sale">Sale</a></li>
+                                        <li><a asp-action="Index" asp-controller="Reports" asp-route-type="SaleReturn">Sale Return</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span><i class="fas fa-user"></i> User</span>
+                            <ul>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li><a asp-action="Register" asp-controller="Users"><span class="fas fa-plus"></span> New User</a></li>
+                                }
+                                <li><a asp-action="ChangePassword" asp-controller="Users"><span class="fas fa-key"></span> Change Password</a></li>
+                                <li><a asp-action="Logout" asp-controller="Users"><span class="fas fa-user"></span> Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <br />
+        <div class="content">
+            <div class="col-md-12">
+                @RenderBody()
+            </div>
+            <br />
+            <br />
+            <br />
+            <br />
+            <div class="footer">
+                <div class="row">
+                    <div class="col-md-5">
+                        <h5>User @User.Identity.Name</h5>
+                    </div>
+                    <div class="col-md-7">
+                        <h5><b>&copy; 2021 - @(SysAcc.GetTF(context, usrMgr.GetUserId(User)) == null ? "" : SysAcc.GetTF(context, usrMgr.GetUserId(User)).Name)</b></h5>
+                    </div>
+                </div>
+                <div class="text-center">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+    <script src="https://kit.fontawesome.com/8f786180c4.js" crossorigin="anonymous"></script>
+    <script src="~/lib/mmenu/js/mmenu.polyfills.js"></script>
+    <script src="~/lib/mmenu/js/mmenu.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        new Mmenu(
+            document.querySelector('#menu'),
+            {
+                slidingSubmenus: false,
+                extensions: ['theme-light'],
+                setSelected: true,
+                counters: false,
+                searchfield: {
+                    placeholder: 'Search menu items',
+                },
+                iconbar: {
+                    use: '(min-width: 450px)',
+                    top: [
+                        '<a href="/Home/Index"><span class="fa fa-home"></span></a>',
+                    ],
+                    bottom: [
+                        '<a href="#/"><span class="fab fa-twitter"></span></a>',
+                        '<a href="#/"><span class="fab fa-facebook"></span></a>',
+                        '<a href="#/"><span class="fab fa-youtube"></span></a>',
+                    ],
+                },
+                sidebar: {
+                    expanded: {
+                        use: '(min-width: 768px)',
+                    },
+                    collapsed: {
+                        use: '(min-width: 450px)',
+                        hideNavbar: false,
+                    }
+                },
+                navbars: [
+                    {
+                        //content: ['searchfield'],
+                    },
+                    {
+                        type: 'tabs',
+                        content: [
+                            '<a href="#panel-menu" style="color: black"><h5><b>SOFTWORLD</b></h3></a>',
+                        ],
+                    },
+                    {
+                        content: ['prev', 'breadcrumbs', 'close'],
+                    }
+                ],
+            },
+            {
+                searchfield: {
+                    clear: true,
+                },
+                navbars: {
+                    breadcrumbs: {
+                        removeFirst: true,
+                    },
+                },
+            }
+        );
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

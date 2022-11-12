@@ -1,0 +1,88 @@
+﻿@model IEnumerable<TMS.VMs.LedgerVM>
+
+@{
+    ViewData["Title"] = "Ledger";
+    Layout = "_LayoutPrint";
+    int sr = 0;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h4 class="text-center">@ViewData["Title"]</h4>
+    </div>
+    <div class="col-md-6">
+        <h5>A/C Title: @ViewBag.Account</h5>
+    </div>
+    <div class="col-md-6">
+        <h5 class="text-right">@ViewBag.DateRange</h5>
+    </div>
+    <div class="col-md-12">
+        <table id="myTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width: 4.15%">Sr</th>
+                    <th class="text-center" style="width: 8.33%">Date</th>
+                    <th class="text-center" style="width: 4.15%">Doc.#</th>
+                    <th class="text-center" style="width: 8.33%">Type</th>
+                    <th style="width: 16.66%">Account</th>
+                    <th style="width: 25%">Narration</th>
+                    <th class="text-center" style="width: 8.33%">Debit</th>
+                    <th class="text-center" style="width: 8.33%">Credit</th>
+                    <th class="text-center" style="width: 8.33%">Balance</th>
+                </tr>
+            </thead>
+            <tbody id="tBody">
+                @if (Model.FirstOrDefault() == null)
+                {
+                    <tr>
+                        <th colspan="9" class="text-center">No data found</th>
+                    </tr>
+                }
+                else
+                {
+                    double balance = 0;
+                    foreach (var item in Model)
+                    {
+                        sr += 1;
+                        balance += item.Debit - item.Credit;
+                        <tr>
+                            <td class="text-center">@sr</td>
+                            <td class="text-center">@item.Date</td>
+                            <td class="text-center">@item.DocId</td>
+                            <td class="text-center">@item.DocType</td>
+                            <td>@item.Account</td>
+                            <td style="white-space: pre-line">@item.Narration</td>
+                            <td class="text-center">@(string.Format("{0:n0}", item.Debit))</td>
+                            <td class="text-center">@(string.Format("{0:n0}", item.Credit))</td>
+                            <td class="text-center">@(string.Format("{0:n0}", balance))</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+            <tfoot id="tFoot">
+                @if (Model.FirstOrDefault() != null)
+                {
+                    <tr>
+                        <th colspan="6"></th>
+                        <th class="text-center">@(string.Format("{0:n0}", Model.Sum(a => a.Debit)))</th>
+                        <th class="text-center">@(string.Format("{0:n0}", Model.Sum(a => a.Credit)))</th>
+                        <th class="text-center">@(string.Format("{0:n0}", Model.Sum(a => a.Debit - a.Credit)))</th>
+                    </tr>
+                }
+            </tfoot>
+        </table>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        var error = '@ViewBag.Error';        
+        $('document').ready(function () {
+            if (error != null || error != '') {
+                DisplayError(error);
+            }
+        })
+    </script>
+}
+
+
+

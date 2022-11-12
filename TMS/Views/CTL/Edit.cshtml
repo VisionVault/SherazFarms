@@ -1,0 +1,104 @@
+﻿
+@{
+    ViewData["Title"] = "Edit CTL";
+}
+
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <input id="Id" type="text" hidden readonly />
+        <input id="InitialName" type="text" hidden readonly />
+        <div class="form-group">
+            <label>FSL</label>
+            <select id="FSLId" class="form-control form-control-sm" disabled></select>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>FSL Code</label>
+                    <input id="FSLCode" type="text" class="form-control form-control-sm text-center" readonly />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Code</label>
+                    <input id="Code" type="text" class="form-control form-control-sm text-center" readonly />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Name</label>
+            <input id="Name" type="text" class="form-control form-control-sm" />
+        </div>
+        <div class="form-group">
+            <button id="btnSave" class="btn btn-sm btn-success shadow"><i class="fas fa-save"></i> Save</button>
+            <a asp-action="Index" class="btn btn-sm btn-primary shadow"><i class="fas fa-search"></i> Search</a>
+        </div>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+@section Scripts
+{
+    <script>
+        var id = @ViewBag.Id;
+        function Rec(id) {
+            $('.loader').show();
+            $.ajax({
+                type: 'Get',
+                url: '/CTL/Recall',
+                data: { id: id },
+                success: function (data) {
+                    if (data != null) {
+                        $('#Id').val(data.id);
+                        $('#InitialName').val(data.initialName);
+                        var op = new Option(data.fsl, data.fslId, false, true);
+                        $('#FSLId').append(op);
+                        $('#FSLCode').val(data.fslCode);
+                        $('#Code').val(data.code);
+                        $('#Name').val(data.name);
+                    }
+                    $('.loader').hide();
+                },
+                error: function (resp) {
+                    $('.loader').hide();
+                    DisplayError(resp.responseText);
+                }
+            })
+        }
+        function GC() {
+            $.when(GetCode($('#FSLCode'), 'CTL', 'GetFSLCode', $('#FSLId').val())).done(function () {
+                GetCode($('#Code'), 'CTL', 'GetMaxCode', $('#FSLId').val());
+            })
+        }
+        $('document').ready(function () {
+            initRSelect($('#FSLId'), null, 'FSL', 'Search', 'FSL');
+            Rec(id);
+            $('#Name').focus();
+
+            //click
+            $('#btnSave').click(function () {
+                var fd = new FormData();
+                fd.append('Id', $('#Id').val());
+                fd.append('Name', $('#Name').val());
+                fd.append('InitialName', $('#InitialName').val());
+                GenAE(fd, 'CTL', 'Edit');
+            })
+
+            //keydown
+            $('#Name').on('keydown', function (e) {
+                if (e.which == 13) {
+                    e.preventDefault();
+                    $('#btnSave').focus();
+                }
+            })
+
+            //change
+            $('#FSLId').on('select2:close', function () {
+                GC();
+                $('#Name').focus();
+            })
+        })
+    </script>
+}
+
+

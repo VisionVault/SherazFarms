@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewData["Title"] = "Recipes";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="shadow" style="padding: 10px;">
+            <a asp-action="Add" class="btn btn-sm btn-success shadow"><i class="fas fa-plus"></i> Add New</a>
+        </div>
+    </div>
+</div>
+<br />
+<div class="col-md-12">
+    <table id="myTable" class="table table-bordered table-striped" style="width: 100% !important">
+        <thead>
+            <tr>
+                <th class="text-center">Sr</th>
+                <th hidden>Id</th>
+                <th>Product</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tBody"></tbody>
+    </table>
+</div>
+
+@section Scripts{
+    <script src="~/js/recipe.js"></script>
+    <script>
+        $('document').ready(function () {
+            LD($('#tBody'), 'Recipe', 'GetAll', $('#FromDate').val(), $('#ToDate').val());
+
+            //click
+            $('#tBody').on('click', '.btnRemove', function () {
+                var row = $(this).closest('tr');
+                var id = parseInt(row.find('td:eq(1)').text());
+                Rem('Recipe', id);
+            })
+        })
+    </script>
+}
+

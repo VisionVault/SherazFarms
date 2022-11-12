@@ -1,0 +1,67 @@
+﻿
+@{
+    ViewData["Title"] = "Class of Transaction Levels";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <a asp-action="Add" class="btn btn-sm btn-success shadow"><i class="fas fa-plus"></i> Add New</a>
+    </div>
+</div>
+<br />
+<table id="myTable" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th class="text-center">Sr</th>
+            <th class="text-center">Code</th>
+            <th>Name</th>
+            <th class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody id="tBody"></tbody>
+</table>
+@section Scripts
+{
+    <script>
+        function LD() {
+            $('.loader').show();
+            $.ajax({
+                type: 'Get',
+                url: '/CTL/GetAll',
+                success: function (data) {
+                    if (data.length > 0) {
+                        var sr = 0;
+                        $.each(data, function (i) {
+                            sr += 1;
+                            var item = data[i];
+                            var row = '<tr>'
+                                + '<td class="text-center">' + sr + '</td>'
+                                + '<td class="text-center">' + item.code + '</td>'
+                                + '<td>' + item.name + '</td>'
+                                + '<td class="text-center"><a href="/CTL/Edit?id=' + item.id + '" class="btn btn-sm btn-warning shadow"><i class="fas fa-edit"></i> Edit</a></td>'
+                                + '</tr>';
+                            $('#tBody').append(row);
+                        })
+                    }
+                    $('#myTable').DataTable({
+                        columns: [
+                            { "width": "8.33%" },
+                            { "width": "8.33%" },
+                            { "width": "66.66%" },
+                            { "width": "16.66%" }
+                        ]
+                    });
+                    $('.loader').hide();
+                },
+                error: function (resp) {
+                    $('.loader').hide();
+                    DisplayError(resp.responseText)
+                }
+            })
+        }
+        $('document').ready(function () {
+            LD();
+        })
+    </script>
+}
+

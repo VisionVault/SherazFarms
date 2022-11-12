@@ -1,0 +1,139 @@
+﻿@model IEnumerable<TMS.VMs.RPTInvoiceVM>
+
+@{
+    ViewData["Title"] = "Invoice";
+    Layout = "_LayoutPrint";
+    int sr = 0;
+}
+<style>
+    @@page {
+        width: 8.25in !important;
+    }
+
+    body {
+        font-family: 'Calibri';
+    }
+
+    h6 {
+        font-size: 20px !important;
+    }
+
+    td, th {
+        font-size: 20px !important;
+    }
+</style>
+
+<div class="col-md-12">
+    <h6 class="text-center"><b>@ViewBag.TF.Address</b></h6>
+    <h6 class="text-center"><b>@ViewBag.TF.Contact</b></h6>
+    @if (Model.FirstOrDefault() != null)
+    {
+        <div class="row">
+            <div class="col-md-6">
+                <div class="border" style="padding: 8px;">
+                    <h6>Customer Name: @Model.FirstOrDefault().Account</h6>
+                    <h6>Contact: @Model.FirstOrDefault().Contact</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Vehicle#: @Model.FirstOrDefault().VehicleNumber</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Driver: @Model.FirstOrDefault().DriverName</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="border" style="padding: 8px;">
+                    <h6>Invoice#: @Model.FirstOrDefault().DocId</h6>
+                    <h6>Date: @Model.FirstOrDefault().Date</h6>
+                    <h6>Term: @Model.FirstOrDefault().Term</h6>
+                </div>
+            </div>
+        </div>
+        <br />
+        <table class="table table-bordered">
+            <tr>
+                <th class="text-center" style="width: 8.33%">Sr.</th>
+                <th style="width: 16.66%">Product</th>
+                <th style="width: 8.33%">Location</th>
+                <th class="text-center" style="width: 8.33%">Empty W.</th>
+                <th class="text-center" style="width: 8.33%">Loaded W.</th>
+                <th class="text-center" style="width: 8.33%">Actual W.</th>
+                @if (!Model.FirstOrDefault().HR)
+                {
+                    <th class="text-center" style="width: 8.33%">Rate</th>
+                    <th class="text-center" style="width: 8.33%">Disc.R</th>
+                    <th class="text-center" style="width: 16.66%">Net</th>
+                }
+            </tr>
+            @foreach (var item in Model)
+            {
+                sr += 1;
+                <tr>
+                    <td class="text-center">@sr</td>
+                    <td>@item.Product</td>
+                    <td>@item.Location</td>
+                    <td class="text-right">@(string.Format("{0:n0}", item.EmptyWeight))</td>
+                    <td class="text-right">@(string.Format("{0:n0}", item.LoadedWeight))</td>
+                    <td class="text-right">@(string.Format("{0:n0}", item.ActualWeight))</td>
+                    @if (!Model.FirstOrDefault().HR)
+                    {
+                        <td class="text-right">@(string.Format("{0:n0}", item.Rate))</td>
+                        <td class="text-right">@(string.Format("{0:n0}", item.DiscountP))</td>
+                        <td class="text-right">@(string.Format("{0:n0}", item.Net))</td>
+                    }
+                </tr>
+            }
+            <tr>
+                <th colspan="5" class="text-right">Total</th>
+                <th class="text-right">@(string.Format("{0:n0}", Model.Sum(a => a.ActualWeight)))</th>
+                @if (!Model.FirstOrDefault().HR)
+                {
+                    <th class="text-right"></th>
+                    <th class="text-right"></th>
+                    <th class="text-right">@(string.Format("{0:n0}", Model.Sum(a => a.Net)))</th>
+                }
+            </tr>
+        </table>
+        <div class="row">
+            <div class="col-md-7">
+            </div>
+            <div class="col-md-5">
+                <div style="padding: 8px;">
+                    <div class="row">
+                        @if (!Model.FirstOrDefault().HR)
+                        {
+                            <div class="col-md-9">
+                                <h6>Total Amount:</h6>
+                                <h6>Discount:</h6>
+                                <h6>Net Bill:</h6>
+                            </div>
+                            <div class="col-md-3 text-right">
+                                @{
+                                    double net = 0, billDisc = 0, billNet = 0;
+                                    net = Model.Sum(a => a.Net);
+                                    double.TryParse(Model.FirstOrDefault().BillDiscount.ToString(), out billDisc);
+                                    if (billDisc > 0)
+                                    {
+                                        billNet = net - billDisc;
+                                    }
+                                    else
+                                    {
+                                        billNet = net;
+                                    }
+                                }
+                                <h6>@(string.Format("{0:n0}", net))</h6>
+                                <h6>@(string.Format("{0:n0}", billDisc))</h6>
+                                <h6>@(string.Format("{0:n0}", billNet))</h6>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <hr />
+    <h6 class="text-center">Powered by Softworld Contact 03217008898</h6>
+</div>
+

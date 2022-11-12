@@ -1,0 +1,90 @@
+﻿
+@{
+    ViewData["Title"] = "New Recipe";
+}
+<style>
+    body, .form-control {
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .label {
+        background-color: yellow;
+        color: black;
+        padding: 10px;
+    }
+</style>
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="form-group">
+                <label>Ready Product</label>
+                <select id="ProductId" type="text" class="form-control form-control-sm"></select>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Raw Material</label>
+                        <select id="RawMaterialId" type="text" class="form-control form-control-sm"></select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Qty</label>
+                        <input id="Qty" type="text" class="form-control form-control-sm text-right" value="0" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group" style="padding-top: 15px;">
+                        <button id="btnAdd" class="btn btn-sm btn-success"><i class="fa fa-plus"></i> Add</button>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="tableFixed">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="width: 8.33%" class="text-center">Sr</th>
+                                    <th style="width: 8.33%" class="text-center" hidden>Product Id</th>
+                                    <th style="width: 25%">Raw Material</th>
+                                    <th style="width: 8.33%" class="text-center">Qty</th>
+                                    <th style="width: 8.33%" class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tBody"></tbody>
+                            <tfoot id="tFoot">
+                                <tr>
+                                    <th colspan="2"></th>
+                                    <th class="text-right"></th>
+                                    <th class="text-right"></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>                
+            </div>
+            <div class="form-group" style="padding-top: 24px;">
+                <button id="btnSave" class="btn btn-sm btn-success shadow"><i class="fas fa-save"></i> Save</button>
+                <a asp-action="Index" class="btn btn-sm btn-primary shadow"><i class="fas fa-search"></i> Search</a>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/js/recipe.js"></script>
+    <script>
+        $('document').ready(function () {
+            initRSelect($('#ProductId'), 'Pro', 'Product', 'Search', 'Ready Product');
+            initRSelect($('#RawMaterialId'), 'Pro', 'Product', 'Search', 'Raw Material');
+
+            //click
+            $('#btnSave').click(function (e) {
+                e.preventDefault();
+                S('Recipe', 'Add', false);
+            })
+        })
+    </script>
+}
+

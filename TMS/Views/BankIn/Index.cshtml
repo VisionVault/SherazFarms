@@ -1,0 +1,64 @@
+﻿
+@{
+    ViewData["Title"] = "Bank Receipts";
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="shadow" style="padding: 10px;">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>From Date</label>
+                        <input id="FromDate" type="date" class="form-control form-control-sm" value="@ViewBag.FromDate" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>To Date</label>
+                        <input id="ToDate" type="date" class="form-control form-control-sm" value="@ViewBag.ToDate" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group" style="margin-top: 31px;">
+                        <button id="btnView" class="btn btn-sm btn-secondary shadow"><i class="fas fa-eye"></i> View</button>
+                        <a asp-action="Add" class="btn btn-sm btn-success shadow"><i class="fas fa-plus"></i> Add New</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<table id="myTable" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th class="text-center">Sr</th>
+            <th class="text-center">Date</th>
+            <th class="text-center">Doc.#</th>
+            <th>Acc. 1</th>
+            <th>Acc. 2</th>
+            <th class="text-center">Amount</th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody id="tBody"></tbody>
+</table>
+@section Scripts{
+    <script src="~/js/vouchers.js"></script>
+    <script>
+        $('document').ready(function () {
+            LD($('#tBody'), 'BankIn', 'GetAll', $('#FromDate').val(), $('#ToDate').val());
+
+            //click
+            $('#btnView').click(function () {
+                LD($('#tBody'), 'BankIn', 'GetAll', $('#FromDate').val(), $('#ToDate').val());
+            })
+            $('#tBody').on('click', '.btnRemove', function () {
+                var row = $(this).closest('tr');
+                var docId = parseInt(row.find('td:eq(2)').text());
+                Rem('BankIn', docId);
+            })
+        })
+    </script>
+}
+

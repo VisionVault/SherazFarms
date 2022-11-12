@@ -1,0 +1,161 @@
+﻿
+@{
+    ViewData["Title"] = ViewBag.Type + " Report";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="shadow" style="padding: 10px;">
+            <div class="row">
+                <div class="col-md-2 FromDate">
+                    <div class="form-group">
+                        <label>From Date</label>
+                        <input id="FromDate" type="date" class="form-control form-control-sm" value="@ViewBag.FromDate" />
+                    </div>
+                </div>
+                <div class="col-md-2 ToDate">
+                    <div class="form-group">
+                        <label>To Date</label>
+                        <input id="ToDate" type="date" class="form-control form-control-sm" value="@ViewBag.ToDate" />
+                    </div>
+                </div>
+                <div class="col-md-4 AccountId">
+                    <div class="form-group">
+                        <label>Account</label>
+                        <select id="AccountId" class="form-control form-control-sm"></select>
+                    </div>
+                </div>
+                <div class="col-md-3 ProductCategoryId">
+                    <div class="form-group">
+                        <label>Product Category</label>
+                        <select id="ProductCategoryId" class="form-control form-control-sm"></select>
+                    </div>
+                </div>
+                <div class="col-md-3 ProductId">
+                    <div class="form-group">
+                        <label>Product</label>
+                        <select id="ProductId" class="form-control form-control-sm"></select>
+                    </div>
+                </div>
+                <div class="col-md-3 Zero" style="padding-top: 30px;">
+                    <div class="form-group">
+                        <label><input id="Zero" type="checkbox" checked /> Show Zero Items</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group" style="margin-top: 31px;">
+                        <button id="btnView" class="btn btn-sm btn-secondary shadow"><i class="fas fa-eye"></i> View</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+@section Scripts{
+    <script>
+        var c = '@ViewBag.C';
+        var a = '@ViewBag.A';
+        var params = @Json.Serialize(ViewBag.Params);
+        function Load() {
+            $('.loader').show();
+            $('.FromDate').hide();
+            $('.ToDate').hide();
+            $('.AccountId').hide();
+            $('.ProductCategoryId').hide();
+            $('.ProductId').hide();
+            $('.Zero').hide();
+
+            $.each(params, function (i) {
+                var item = params[i];
+                $('.' + item).show();
+            })
+            $('#FromDate').focus();
+            $('.loader').hide();
+        }
+        function v() {
+            var valid = true;
+            if ($('.FromDate').is(':visible') && $('#FromDate').val() == null) {
+                $('#FromDate').focus();
+                DisplayError('Invalid From date');
+                valid = false;
+                return valid;
+            }
+            if ($('.ToDate').is(':visible') && $('#ToDate').val() == null) {
+                $('#ToDate').focus();
+                DisplayError('Invalid To date');
+                valid = false;
+                return valid;
+            }
+            if (a == 'Ledger') {
+                if ($('.AccountId').is(':visible') && $('#AccountId').val() == null) {
+                    DisplayError('Invalid Account');
+                    valid = false;
+                    return valid;
+                }
+            }
+            return valid;
+        }
+        function LD() {
+            if (v()) {
+                $('.loader').show();
+                var fd = new FormData();
+                fd.append('FromDate', $('#FromDate').val());
+                fd.append('ToDate', $('#ToDate').val());
+                fd.append('CategoryId', $('#CategoryId').val());
+                fd.append('AccountId', $('#AccountId').val());
+                fd.append('ProductCategoryId', $('#ProductCategoryId').val());
+                fd.append('ProductId', $('#ProductId').val());
+                fd.append('Zero', $('#Zero').is(':checked'));
+                $.ajax({
+                    type: 'Post',
+                    url: '/' + c + '/' + a,
+                    data: fd,
+                    contentType: false,
+                    processData: false,
+                    success: function (resp) {
+                        var w = window.open('about:blank');
+                        w.document.write(resp);
+                        $('.loader').hide();
+                    },
+                    error: function (resp) {
+                        $('.loader').hide();
+                        DisplayError(resp.responseText);
+                    }
+                })
+            }
+        }
+        $('document').ready(function () {
+            initRSelectWGAL($('#AccountId'), null, 'Accounts', 'Search', 'Account', 0);
+            initRSelect($('#ProductCategoryId'), null, 'ProductCategory', 'Search', 'Category');
+            initRSelect($('#ProductId'), 'Pro', 'Product', 'Search', 'Product');
+            Load();
+
+            //click
+            $('#btnView').click(function () {
+                LD();
+            })
+
+            //keydown
+            $('#FromDate').on('keydown', function (e) {
+                if (e.which == 13) {
+                    e.preventDefault();
+                    $('#ToDate').focus();
+                }
+            })
+            $('#ToDate').on('keydown', function (e) {
+                if (e.which == 13) {
+                    e.preventDefault();
+                    $('#AccountId').select2('open');
+                }
+            })
+
+            //change
+            $('#AccountId').on('select2:close', function () {
+                if (parseInt($(this).val()) > 0) {
+                    $('#btnView').focus();
+                }
+            })
+        })
+    </script>
+}

@@ -1,0 +1,128 @@
+﻿@model IEnumerable<TMS.VMs.SaleReportVM>
+
+@{
+    ViewData["Title"] = "Purchase Report";
+    Layout = "_LayoutPrint";
+    int sr = 0;
+    double totalDiscount = 0;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h4 class="text-center">@ViewData["Title"]</h4>
+    </div>
+    <div class="col-md-6">
+    </div>
+    <div class="col-md-6">
+        <h5 class="text-right">@ViewBag.DateRange</h5>
+    </div>
+    <div class="col-md-12">
+        <table id="myTable" class="table table-bordered table-striped">
+            <tbody id="tBody">
+                <tr>
+                    <th class="text-center" style="width: 8.33%">Sr</th>
+                    <th class="text-center" style="width: 8.33%">Date</th>
+                    <th class="text-center" style="width: 8.33%">Doc.#</th>
+                    <th style="width: 16.66%">Customer</th>
+                    <th style="width: 16.66%">Product</th>
+                    <th class="text-center" style="width: 8.33%">Qty</th>
+                    <th class="text-center" style="width: 8.33%">Rate</th>
+                    <th class="text-center" style="width: 8.33%">Amount</th>
+                </tr>
+                @if (Model.FirstOrDefault() == null)
+                {
+                    <tr>
+                        <th colspan="8" class="text-center">No data found</th>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        @if (item.IsGroupChanged)
+                        {
+                            @foreach (var bill in Model.Where(a => a.DocId == item.DocId).ToList())
+                            {
+                                sr += 1;
+                                <tr>
+                                    <td class="text-center">@sr</td>
+                                    <td class="text-center">@bill.Date</td>
+                                    <td class="text-center">@bill.DocId</td>
+                                    <td>@bill.Account</td>
+                                    <td>@bill.Product</td>
+                                    <td class="text-right">@bill.Qty</td>
+                                    <td class="text-right">@bill.Rate</td>
+                                    <td class="text-right">@bill.Amount</td>
+                                </tr>
+                            }
+                            <tr>
+                                <th colspan="5"></th>
+                                <th class="text-right">@(string.Format("{0:n0}", Model.Where(a => a.DocId == item.DocId).Sum(a => a.Qty)))</th>
+                                <th class="text-right"></th>
+                                <th class="text-right">@(string.Format("{0:n0}", Model.Where(a => a.DocId == item.DocId).Sum(a => a.Amount)))</th>
+                            </tr>
+                            <tr>
+                                <th colspan="7"></th>
+                                <th class="text-right">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            Disc.: <br />
+                                            Net:
+                                        </div>
+                                        <div class="col-md-6 text-right">
+                                            @{
+                                                double amount = Model.Where(a => a.DocId == item.DocId).Sum(a => a.Amount);
+                                                double disc = Model.Where(a => a.DocId == item.DocId).FirstOrDefault().BillDiscount == null ? 0 :
+                                                                            (double)Model.Where(a => a.DocId == item.DocId).FirstOrDefault().BillDiscount;
+                                                totalDiscount += disc;
+                                                double net = amount - disc;
+                                            }
+                                            @(string.Format("{0:n0}", disc))<br />
+                                            @(string.Format("{0:n0}", net))
+                                        </div>
+                                    </div>
+                                </th>
+                            </tr>
+                        }
+                    }
+                    <tr>
+                        <th colspan="7"></th>
+                        <th class="text-right">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    T.Amount:
+                                    <br />
+                                    T.Disc.:
+                                    <br />
+                                    T.Net:
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    @{
+                                        double totalAm = Model.Sum(a => a.Amount);
+                                        double tNet = totalAm - totalDiscount;
+                                    }
+                                    @(string.Format("{0:n0}", totalAm))<br />
+                                    @(string.Format("{0:n0}", totalDiscount))<br />
+                                    @(string.Format("{0:n0}", tNet))
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        var error = '@ViewBag.Error';
+        $('document').ready(function () {
+            if (error != null || error != '') {
+                DisplayError(error);
+            }
+        })
+    </script>
+}
+
+
+

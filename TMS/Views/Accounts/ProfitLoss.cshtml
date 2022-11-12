@@ -1,0 +1,113 @@
+﻿@model IEnumerable<TMS.VMs.RPTPLVM>
+
+@{
+    ViewData["Title"] = "Profit and Loss";
+    Layout = "_LayoutPrint";
+    int sr = 0;
+    double np = 0;
+}
+<div class="row">
+    <div class="col-md-12">
+        <h4 class="text-center">@ViewData["Title"]</h4>
+    </div>
+    <div class="col-md-6">
+
+    </div>
+    <div class="col-md-6">
+        <h5 class="text-right">@ViewBag.DateRange</h5>
+    </div>
+    <div class="col-md-12">
+        @if (Model.FirstOrDefault() != null)
+        {
+            <table class="table table-bordered">
+                @foreach (var item in Model)
+                {
+                    double netSales = Model.Where(a => a.GAL == "Sales").Sum(a => a.Debit - a.Credit);
+                    double cgs = Model.Where(a => a.GAL == "CGS").Sum(a => a.Credit - a.Debit);
+                    double gp = netSales - cgs;
+                    double totalCOS = Model.Where(a => a.GAL == "COST OF SALES").Sum(a => a.Debit - a.Credit);
+                    double totalSellExpenses = Model.Where(a => a.GAL == "SELLING EXPENSES").Sum(a => a.Debit - a.Credit);
+                    double totalAdminExpenses = Model.Where(a => a.GAL == "ADMINISTRATIVE EXPENSES").Sum(a => a.Debit - a.Credit);
+                    double totalIncomes = Model.Where(a => a.GAL == "OTHER INCOME").Sum(a => a.Credit - a.Debit);
+                    double totalExpenses = totalCOS + totalSellExpenses + totalAdminExpenses;
+                    np = (gp + totalIncomes) - totalExpenses;
+
+                    if (item.IsGroupChanged)
+                    {
+                        <tr>
+                            <th colspan="5" class="text-center">@item.GAL</th>
+                        </tr>
+                        <tr>
+                            <th class="text-center">Sr</th>
+                            <th>Name</th>
+                            <th></th>
+                            <th></th>
+                            <th>Net</th>
+                        </tr>
+                        @foreach (var item2 in Model.Where(a => a.GAL == item.GAL))
+                        {
+                            sr += 1;
+                            <tr>
+                                <td class="text-center">@sr</td>
+                                <td>@item2.Account</td>
+                                <td class="text-right">@(string.Format("{0:n0}", item2.Debit))</td>
+                                <td class="text-right">@(string.Format("{0:n0}", item2.Credit))</td>
+                                <td class="text-center">-</td>
+                            </tr>
+                        }
+                        @if (item.GAL == "Sales")
+                        {
+                            <tr>
+                                <th colspan="4">Net Sales</th>
+                                <th class="text-right">@(string.Format("{0:n0}", netSales))</th>
+                            </tr>
+                        }
+                        @if (item.GAL == "COST OF SALES")
+                        {
+                            <tr>
+                                <th colspan="4">Total COS</th>
+                                <th class="text-right">@(string.Format("{0:n0}", totalCOS))</th>
+                            </tr>
+                        }
+                        @if (item.GAL == "SELLING EXPENSES")
+                        {
+                            <tr>
+                                <th colspan="4">Total Selling Expenses</th>
+                                <th class="text-right">@(string.Format("{0:n0}", totalSellExpenses))</th>
+                            </tr>
+                        }
+                        @if (item.GAL == "ADMINISTRATIVE EXPENSES")
+                        {
+                            <tr>
+                                <th colspan="4">Total Admin Expenses</th>
+                                <th class="text-right">@(string.Format("{0:n0}", totalAdminExpenses))</th>
+                            </tr>
+                        }
+                        @if (item.GAL == "OTHER INCOME")
+                        {
+                            <tr>
+                                <th colspan="4">Total Incomes</th>
+                                <th class="text-right">@(string.Format("{0:n0}", totalIncomes))</th>
+                            </tr>
+                        }
+                    }
+                }
+                <tr>
+                    <th colspan="4">Net Profit</th>
+                    <th class="text-right">@(string.Format("{0:n0}", np))</th>
+                </tr>
+            </table>
+        }
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        var error = '@ViewBag.Error';
+        $('document').ready(function () {
+            if (error != '') {
+                DisplayError(error);
+            }
+        })
+    </script>
+}

@@ -1,0 +1,11 @@
+﻿table{
+    font-size: 12px !important;
+}
+th, td{
+    padding: 5px !important;
+}
+@media Print{
+    table{
+        page-break-after: avoid;
+    }
+}

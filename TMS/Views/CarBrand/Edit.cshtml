@@ -1,0 +1,113 @@
+﻿@{
+    ViewData["Title"] = "Edit Car Brand";
+}
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <input id="Id" type="text" hidden readonly />
+        <input id="InitialName" type="text" hidden readonly />
+        <div class="form-group">
+            <label>Car</label>
+            <select id="CarId" class="form-control form-control-sm"></select>
+        </div>
+        <div class="form-group">
+            <label>Name</label>
+            <input id="Name" type="text" class="form-control form-control-sm" />
+        </div>
+        <div class="row">
+            <div class="col-md-9">
+                <div class="form-group">
+                    <label>Model</label>
+                    <input id="Model" type="text" class="form-control form-control-sm" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Year</label>
+                    <input id="Year" type="text" class="form-control form-control-sm" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <button id="btnSave" class="btn btn-sm btn-success shadow"><i class="fas fa-save"></i> Save</button>
+            <a asp-action="Index" class="btn btn-sm btn-primary shadow"><i class="fas fa-search"></i> Search</a>
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+@section Scripts
+{
+<script>
+        var id = @ViewBag.Id;
+        function Rec(id) {
+            $('.loader').show();
+            $.ajax({
+                type: 'Get',
+                url: '/CarBrand/Recall',
+                data: { id: id },
+                success: function (data) {
+                    if (data != null) {
+                        $('#Id').val(data.id);
+                        $('#InitialName').val(data.initialName);
+                        newOption($('#CarId'), data.car, data.carId);
+                        $('#Name').val(data.name);
+                        $('#Model').val(data.model);
+                        $('#Year').val(data.year);
+                    }
+                    $('.loader').hide();
+                },
+                error: function (resp) {
+                    $('.loader').hide();
+                    DisplayError(resp.responseText);
+                }
+            })
+        }
+        $('document').ready(function () {
+            Rec(id);
+
+            //click
+            $('#btnSave').click(function () {
+                initRSelect($('#CarId'), null, 'Car', 'Search', 'Car');
+                var fd = new FormData();
+                fd.append('Id', $('#Id').val());
+                fd.append('InitialName', $('#InitialName').val());
+                fd.append('CarId', $('#CarId').val());
+                fd.append('Name', $('#Name').val());
+                fd.append('Model', $('#Model').val());
+                fd.append('Year', $('#Year').val());
+                GenAE(fd, 'CarBrand', 'Edit');
+            })
+
+            //Keydown
+            $('#Name').on('keydown', function (e) {
+                if (e.which == 13) {
+                    e.preventDefault();
+                    $('#Model').focus();
+                }
+            })
+            $('#Model').on('keydown', function (e) {
+                if (e.which == 13) {
+                    e.preventDefault();
+                    $('#Year').focus();
+                }
+            })
+            $('#Year').on('keydown', function (e) {
+                if (e.which == 13) {
+                    e.preventDefault();
+                    $('#btnSave').focus();
+                }
+            })
+
+            //select2
+            $('#CarId').on('select2:close', function () {
+                var id = $(this).val();
+                if (id > 0) {
+                    $('#Name').focus();
+                }
+            })
+        })
+</script>
+}
+
+

@@ -1,0 +1,67 @@
+﻿
+@{
+    ViewData["Title"] = "New Customer Car";
+}
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Customer</label>
+                    <select id="AccountId" class="form-control form-control-sm"></select>
+                </div>
+            </div>
+            <div class="col-md-4" style="padding-top: 27px">
+                <button id="btnSave" class="btn btn-sm btn-success"><i class="fas fa-save"></i> Save</button>
+                <a asp-action="Index" class="btn btn-sm btn-primary"><i class="fas fa-search"></i> Search</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1" hidden>
+                <label>Id</label>
+                <input id="Id" class="form-control form-control-sm text-right" value="0" readonly />
+            </div>
+            <div class="col-md-2">
+                <label>Reg.#</label>
+                <input id="RegistrationNumber" class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-2">
+                <label>Color</label>
+                <input id="Color" class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-3" style="padding-top: 27px">
+                <button id="btnAdd" class="btn btn-sm btn-success"><i class="fas fa-plus"></i> Add</button>
+                <button id="btnReset" class="btn btn-sm btn-warning"><i class="fas fa-recycle"></i> Reset</button>
+            </div>
+        </div>
+        <br />
+        <table id="myTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width: 8.33%" hidden>Id</th>
+                    <th style="width: 33.33%">Reg.#</th>
+                    <th style="width: 33.33%">Color</th>
+                    <th class="text-center" style="width: 8.33%">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tBody"></tbody>
+        </table>
+    </div>
+    <div class="col-md-1"></div>
+</div>
+@section Scripts
+{
+    <script src="~/js/customerCar.js"></script>
+    <script>
+        $('document').ready(function () {
+            initRSelect($('#AccountId'), 'Acc', 'Customer', 'SearchAcc', 'Customer');
+
+            //click
+            $('#btnSave').click(function (e) {
+                e.preventDefault();
+                S('CustomerCar', 'Add');
+            })
+        })
+    </script>
+}

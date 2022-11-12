@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewData["Title"] = "Car Engines";
+}
+<style>
+    th, td {
+        font-size: 12px;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <a asp-action="Add" class="btn btn-sm btn-success shadow"><i class="fas fa-plus"></i> Add New</a>
+    </div>
+</div>
+<br />
+<table id="myTable" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th class="text-center">Sr</th>
+            <th>Brand</th>
+            <th>Engine #</th>
+            <th>Engine CC</th>
+            <th>Oil</th>
+            <th>Company</th>
+            <th>Oil F.</th>
+            <th>Air F.</th>
+            <th>Fuel F.</th>
+            <th>Cabin F.</th>
+            <th class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody id="tBody"></tbody>
+</table>
+@section Scripts
+{
+    <script src="~/js/carEngine.js"></script>
+    <script>
+        $('document').ready(function () {
+            LD('CarEngine', 'GetAll');
+        })
+    </script>
+}
+

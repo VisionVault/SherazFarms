@@ -1,0 +1,99 @@
+﻿@model IEnumerable<TMS.VMs.RPTTrialVM>
+
+@{
+    ViewData["Title"] = "Trial Balance";
+    Layout = "_LayoutPrint";
+}
+<div class="row">
+    <div class="col-md-12">
+        <h4 class="text-center">@ViewData["Title"]</h4>
+    </div>
+    <div class="col-md-6">
+
+    </div>
+    <div class="col-md-6">
+        <h5 class="text-right">@ViewBag.DateRange</h5>
+    </div>
+    <div class="col-md-12">
+        @if (Model.FirstOrDefault() != null)
+        {
+            <table class="table table-bordered">
+                <tr>
+                    <th class="text-center" style="width: 8.33%">Code</th>
+                    <th style="width: 33.33%">A/C Name</th>
+                    <th class="text-center" style="width: 8.33%">Op. Debit</th>
+                    <th class="text-center" style="width: 8.33%">Op. Credit</th>
+                    <th class="text-center" style="width: 8.33%">Curr. Debit</th>
+                    <th class="text-center" style="width: 8.33%">Curr. Credit</th>
+                    <th class="text-center" style="width: 8.33%">Cl. Debit</th>
+                    <th class="text-center" style="width: 8.33%">Cl. Credit</th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    if (item.IsCTLChanged)
+                    {
+                        <tr>
+                            <th class="text-center">@item.CTLCode</th>
+                            <th>@item.CTL</th>
+                            <th class="text-right">@(string.Format("{0:n}", Model.Where(a => a.CTL == item.CTL).Sum(a => a.OpDebit)))</th>
+                            <th class="text-right">@(string.Format("{0:n}", Model.Where(a => a.CTL == item.CTL).Sum(a => a.OpCredit)))</th>
+                            <th class="text-right">@(string.Format("{0:n}", Model.Where(a => a.CTL == item.CTL).Sum(a => a.CurrDebit)))</th>
+                            <th class="text-right">@(string.Format("{0:n}", Model.Where(a => a.CTL == item.CTL).Sum(a => a.CurrCredit)))</th>
+                            <th class="text-right">@(string.Format("{0:n}", Model.Where(a => a.CTL == item.CTL).Sum(a => a.ClDebit)))</th>
+                            <th class="text-right">@(string.Format("{0:n}", Model.Where(a => a.CTL == item.CTL).Sum(a => a.ClCredit)))</th>
+                        </tr>
+                        @foreach (var item2 in Model.Where(a => a.CTLCode == item.CTLCode))
+                        {
+                            if (item2.IsGALChanged)
+                            {
+                                <tr>
+                                    <th class="text-center">@item2.GALCode</th>
+                                    <th>@item2.GAL</th>
+                                    <th class="text-right">@(string.Format("{0:n}", Model.Where(a => a.GAL == item2.GAL).Sum(a => a.OpDebit)))</th>
+                                    <th class="text-right">@(string.Format("{0:n}", Model.Where(a => a.GAL == item2.GAL).Sum(a => a.OpCredit)))</th>
+                                    <th class="text-right">@(string.Format("{0:n}", Model.Where(a => a.GAL == item2.GAL).Sum(a => a.CurrDebit)))</th>
+                                    <th class="text-right">@(string.Format("{0:n}", Model.Where(a => a.GAL == item2.GAL).Sum(a => a.CurrCredit)))</th>
+                                    <th class="text-right">@(string.Format("{0:n}", Model.Where(a => a.GAL == item2.GAL).Sum(a => a.ClDebit)))</th>
+                                    <th class="text-right">@(string.Format("{0:n}", Model.Where(a => a.GAL == item2.GAL).Sum(a => a.ClCredit)))</th>
+                                </tr>
+                                @foreach (var item3 in Model.Where(a => a.GALCode == item2.GALCode))
+                                {
+                                    <tr>
+                                        <td class="text-center">@item3.AccCode</td>
+                                        <td>@item3.Acc</td>
+                                        <td class="text-right">@(string.Format("{0:n}", item3.OpDebit))</td>
+                                        <td class="text-right">@(string.Format("{0:n}", item3.OpCredit))</td>
+                                        <td class="text-right">@(string.Format("{0:n}", item3.CurrDebit))</td>
+                                        <td class="text-right">@(string.Format("{0:n}", item3.CurrCredit))</td>
+                                        <td class="text-right">@(string.Format("{0:n}", item3.ClDebit))</td>
+                                        <td class="text-right">@(string.Format("{0:n}", item3.ClCredit))</td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    }
+                }
+                <tr>
+                    <th colspan="2"></th>
+                    <th class="text-right">@(string.Format("{0:n}", Model.Sum(a => a.OpDebit)))</th>
+                    <th class="text-right">@(string.Format("{0:n}", Model.Sum(a => a.OpCredit)))</th>
+                    <th class="text-right">@(string.Format("{0:n}", Model.Sum(a => a.CurrDebit)))</th>
+                    <th class="text-right">@(string.Format("{0:n}", Model.Sum(a => a.CurrCredit)))</th>
+                    <th class="text-right">@(string.Format("{0:n}", Model.Sum(a => a.ClDebit)))</th>
+                    <th class="text-right">@(string.Format("{0:n}", Model.Sum(a => a.ClCredit)))</th>
+                </tr>
+            </table>
+        }
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        var error = '@ViewBag.Error';
+        $('document').ready(function () {
+            if (error != '') {
+                DisplayError(error);
+            }
+        })
+    </script>
+}

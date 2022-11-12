@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewData["Title"] = "Customer Cars";
+}
+<div class="row">
+    <div class="col-md-12">
+        <a asp-action="Add" class="btn btn-sm btn-success shadow"><i class="fas fa-plus"></i> Add New</a>
+    </div>
+</div>
+<br />
+<table id="myTable" class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th class="text-center">Sr</th>
+            <th>Customer</th>
+            <th>Contact</th>
+            <th>Reg.#</th>
+            <th>Color</th>
+            <th>Curr. Milage</th>
+            <th>Due Milage</th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody id="tBody"></tbody>
+</table>
+@section Scripts{
+    <script src="~/js/customerCar.js"></script>
+    <script>
+        $('document').ready(function () {
+            LD('CustomerCar', 'GetAll');
+        })
+    </script>
+}

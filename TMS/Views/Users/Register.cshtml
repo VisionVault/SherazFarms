@@ -1,0 +1,100 @@
+﻿@{
+    ViewData["Title"] = "Register";
+}
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Username</label>
+            <input id="UserName" type="text" class="form-control form-control-sm" />
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input id="Password" type="password" class="form-control form-control-sm" />
+        </div>
+        <div class="form-group">
+            <label>Re-Type Password</label>
+            <input id="ConfirmPassword" type="password" class="form-control form-control-sm" />
+        </div>
+        <div class="form-group">
+            <label>Role</label>
+            <select id="Role" class="form-control form-control-sm"></select>
+        </div>
+        <div class="form-group">
+            <button id="btnSave" class="btn btn-sm btn-success shadow"><span class="fa fa-user"></span> Register</button>
+            @*<a asp-action="Index" class="btn btn-sm btn-primary shadow"><span class="fa fa-search"></span> Search</a>*@
+        </div>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+@section Scripts{
+    <script>
+        function Roles() {
+            var select = $('#Role');
+            select.html('');
+            $.ajax({
+                type: 'Get',
+                url: '/Users/Roles',
+                success: function (data) {
+                    var op = new Option('Select a role', null, false, true);
+                    select.append(op);
+                    if (data.length > 0) {
+                        $.each(data, function (i) {
+                            var item = data[i];
+                            var op2 = new Option(item.name, item.name, false, false);
+                            select.append(op2);
+                        })
+                    }
+                },
+                error: function (resp) {
+
+                }
+            })
+        }
+        function R() {
+            $('.loader').show();
+            var fd = new FormData();
+            var q = window.location.href.split('ReturnUrl=');
+            var ru = decodeURIComponent(q[1]);
+
+            fd.append("UserName", $('#UserName').val());
+            fd.append("Password", $('#Password').val());
+            fd.append("ConfirmPassword", $('#ConfirmPassword').val());
+            fd.append("Role", $('#Role').val());
+            fd.append("ReturnUrl", ru);
+            $.ajax({
+                type: 'Post',
+                url: '/Users/Register',
+                data: fd,
+                contentType: false,
+                processData: false,
+                success: function (resp) {
+                    window.location.href = resp;
+                },
+                error: function (resp) {
+                    $('.loader').hide();
+                    $.alert({
+                        title: 'Error',
+                        content: resp.responseText,
+                        type: 'red',
+                        typeAnimated: true,
+                        buttons: {
+                            GOBack: {
+                                text: 'GO Back',
+                                btnClass: 'btn-red'
+                            }
+                        }
+                    })
+                }
+            })
+        }
+        $('document').ready(function () {
+            Roles();
+
+            //Click
+            $('#btnSave').click(function () {
+                R();
+            })
+        })
+    </script>
+}

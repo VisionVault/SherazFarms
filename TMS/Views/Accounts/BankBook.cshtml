@@ -1,0 +1,136 @@
+﻿@model IEnumerable<TMS.VMs.LedgerVM>
+
+@{
+    ViewData["Title"] = "Bank Book";
+    Layout = "_LayoutPrint";
+    int drSr = 0;
+    int crSr = 0;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h4 class="text-center">@ViewData["Title"]</h4>
+    </div>
+    <div class="col-md-6">
+        
+    </div>
+    <div class="col-md-6">
+        <h5 class="text-right">@ViewBag.DateRange</h5>
+    </div>
+    <div class="col-md-12">
+        <div class="row">
+            @foreach (var item in Model.OrderBy(a => a.Name).ToList())
+            {
+                if (item.isGroupChanged)
+                {
+                    <div class="col-md-6">
+                        <table id="myTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 8.33%">Sr</th>
+                                    <th class="text-center" style="width: 8.33%">Doc.#</th>
+                                    <th class="text-center" style="width: 8.33%">Type</th>
+                                    <th style="width: 25%">Account</th>
+                                    <th style="width: 25%">Narration</th>
+                                    <th class="text-center" style="width: 8.33%">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tBody">
+                                @if (Model.FirstOrDefault() == null)
+                                {
+                                    <tr>
+                                        <th colspan="6" class="text-center">No data found</th>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    foreach (var item2 in Model.Where(a => a.EntryType == "Debit" && a.Name == item.Name).ToList())
+                                    {
+                                        drSr += 1;
+                                        <tr>
+                                            <td class="text-center">@drSr</td>
+                                            <td class="text-center">@item2.DocId</td>
+                                            <td class="text-center">@item2.DocType</td>
+                                            <td>@item2.Account</td>
+                                            <td>@item2.Narration</td>
+                                            <td class="text-center">@(string.Format("{0:n0}", item2.Balance))</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                            <tfoot id="tFoot">
+                                @if (Model.FirstOrDefault() != null)
+                                {
+                                    <tr>
+                                        <th colspan="5"></th>
+                                        <th class="text-center">@(string.Format("{0:n0}", Model.Where(a => a.EntryType == "Debit" && a.Name == item.Name).Sum(a => a.Balance)))</th>
+                                    </tr>
+                                }
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table id="myTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 8.33%">Sr</th>
+                                    <th class="text-center" style="width: 8.33%">Doc.#</th>
+                                    <th class="text-center" style="width: 8.33%">Type</th>
+                                    <th style="width: 25%">Account</th>
+                                    <th style="width: 25%">Narration</th>
+                                    <th class="text-center" style="width: 8.33%">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tBody">
+                                @if (Model.FirstOrDefault() == null)
+                                {
+                                    <tr>
+                                        <th colspan="6" class="text-center">No data found</th>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    foreach (var item2 in Model.Where(a => a.EntryType == "Credit" && a.Name == item.Name).ToList())
+                                    {
+                                        crSr += 1;
+                                        <tr>
+                                            <td class="text-center">@crSr</td>
+                                            <td class="text-center">@item2.DocId</td>
+                                            <td class="text-center">@item2.DocType</td>
+                                            <td>@item2.Account</td>
+                                            <td>@item2.Narration</td>
+                                            <td class="text-center">@(string.Format("{0:n0}", item2.Balance))</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                            <tfoot id="tFoot">
+                                @if (Model.FirstOrDefault() != null)
+                                {
+                                    <tr>
+                                        <th colspan="5"></th>
+                                        <th class="text-center">@(string.Format("{0:n0}", Model.Where(a => a.EntryType == "Credit" && a.Name == item.Name).Sum(a => a.Balance)))</th>
+                                    </tr>
+                                }
+                            </tfoot>
+                        </table>
+                    </div>
+                }
+            }
+        </div>
+
+    </div>
+</div>
+@section Scripts{
+    <script>
+        var error = '@ViewBag.Error';
+        $('document').ready(function () {
+            if (error != null || error != '') {
+                DisplayError(error);
+            }
+        })
+    </script>
+}
+
+
+

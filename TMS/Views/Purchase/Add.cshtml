@@ -1,0 +1,183 @@
+﻿
+@{
+    ViewData["Title"] = "New Purchase";
+}
+<style>
+    body, .form-control {
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .label {
+        background-color: yellow;
+        color: black;
+        padding: 10px;
+    }
+</style>
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-1">
+            <div class="form-group">
+                <label>Doc.#</label>
+                <input id="DocId" type="text" class="form-control form-control-sm text-center" value="@ViewBag.DocId" readonly />
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label>Date</label>
+                <input id="TransactionDate" type="date" class="form-control form-control-sm" value="@ViewBag.Date" />
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="form-group">
+                <label>Account</label>
+                <select id="AccountId" type="text" class="form-control form-control-sm"></select>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label>Receipt #</label>
+                <input id="ReceiptNumber" type="text" class="form-control form-control-sm" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Contact</label>
+                <input id="Contact" type="text" class="form-control form-control-sm" />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Name</label>
+                <input id="Name" type="text" class="form-control form-control-sm" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Product</label>
+                <select id="ProductId" type="text" class="form-control form-control-sm"></select>
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="form-group">
+                <label>Stock</label>
+                <input id="Stock" type="text" class="form-control form-control-sm text-right" readonly value="0" />
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="form-group">
+                <label>Qty</label>
+                <input id="Qty" type="text" class="form-control form-control-sm text-right" value="0" />
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="form-group">
+                <label>Rate</label>
+                <input id="Rate" type="text" class="form-control form-control-sm text-right" value="0" />
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label>Amount</label>
+                <input id="Amount" type="text" class="form-control form-control-sm text-right" readonly value="0" />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group" style="padding-top: 24px;">
+                <button id="btnAdd" class="btn btn-sm btn-success"><i class="fa fa-plus"></i> Add</button>
+                <button id="btnReset" class="btn btn-sm btn-danger"><i class="fa fa-recycle"></i> Reset</button>
+            </div>
+        </div>
+    </div>
+    <div class="tableFixed">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th style="width: 8.33%" class="text-center">Sr</th>
+                    <th style="width: 8.33%" class="text-center" hidden>Product Id</th>
+                    <th style="width: 25%">Product</th>
+                    <th style="width: 8.33%" class="text-center">Qty</th>
+                    <th style="width: 8.33%" class="text-center">Rate</th>
+                    <th style="width: 8.33%" class="text-center">Amount</th>
+                    <th style="width: 8.33%" class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tBody"></tbody>
+            <tfoot id="tFoot">
+                <tr>
+                    <th colspan="2"></th>
+                    <th class="text-right"></th>
+                    <th class="text-right"></th>
+                    <th class="text-right"></th>
+                    <th class="text-right"></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Disc.</label>
+                        <input id="Discount" type="text" class="form-control form-control-sm text-right" value="0" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Net</label>
+                        <input id="Net" type="text" class="form-control form-control-sm text-right" value="0" readonly />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Payment</label>
+                        <input id="Payment" type="text" class="form-control form-control-sm text-right" value="0" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group" style="padding-top: 27px;">
+                        <label>
+                            <input id="RadioCash" type="radio" name="PaymentTerm" value="1" checked /> Cash
+                            <input id="RadioCredit" type="radio" name="PaymentTerm" value="2" /> Credit
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-right">
+            <div class="form-group" style="padding-top: 24px;">
+                <label><input id="HR" type="checkbox" checked /> Hide Rate</label>
+                <button id="btnSave" class="btn btn-sm btn-success shadow"><i class="fas fa-save"></i> Save</button>
+                <button id="btnPrint" class="btn btn-sm btn-secondary shadow"><i class="fas fa-print"></i> Save &amp; Print</button>
+                <a asp-action="Index" class="btn btn-sm btn-primary shadow"><i class="fas fa-search"></i> Search</a>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/js/sale.js"></script>
+    <script>
+        vType = 'P';
+        $('document').ready(function () {
+            initRSelect($('#AccountId'), 'Acc', 'Supplier', 'Search', 'Supplier');
+            initRSelect($('#ProductId'), 'Pro', 'Product', 'Search', 'Product');
+            $('#Contact').focus();
+
+            //click
+            $('#btnSave').click(function (e) {
+                e.preventDefault();
+                S('Purchase', 'Add', false);
+            })
+            $('#btnPrint').click(function (e) {
+                e.preventDefault();
+                S('Purchase', 'Add', true);
+            })
+        })
+    </script>
+}
+

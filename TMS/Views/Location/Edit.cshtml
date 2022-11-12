@@ -1,0 +1,61 @@
+﻿
+@{
+    ViewData["Title"] = "Edit Location";
+}
+
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <input id="Id" type="text" hidden readonly />
+        <input id="InitialName" type="text" hidden readonly />
+        <div class="form-group">
+            <label>Name</label>
+            <input id="Name" type="text" class="form-control form-control-sm" />
+        </div>
+        <div class="form-group">
+            <button id="btnSave" class="btn btn-sm btn-success shadow"><i class="fas fa-save"></i> Save</button>
+            <a asp-action="Index" class="btn btn-sm btn-primary shadow"><i class="fas fa-search"></i> Search</a>
+        </div>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+@section Scripts
+{
+    <script>
+        var id = @ViewBag.Id;
+        function Rec(id) {
+            $('.loader').show();
+            $.ajax({
+                type: 'Get',
+                url: '/Location/Recall',
+                data: { id: id },
+                success: function (data) {
+                    if (data != null) {
+                        $('#Id').val(data.id);
+                        $('#InitialName').val(data.initialName);
+                        $('#Name').val(data.name);
+                    }
+                    $('.loader').hide();
+                },
+                error: function (resp) {
+                    $('.loader').hide();
+                    DisplayError(resp.responseText);
+                }
+            })
+        }
+        $('document').ready(function () {
+            Rec(id);
+
+            //click
+            $('#btnSave').click(function () {
+                var fd = new FormData();
+                fd.append('Id', $('#Id').val());
+                fd.append('InitialName', $('#InitialName').val());
+                fd.append('Name', $('#Name').val());
+                GenAE(fd, 'Location', 'Edit');
+            })
+        })
+    </script>
+}
+
+
