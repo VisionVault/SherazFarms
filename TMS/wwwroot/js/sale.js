@@ -30,6 +30,7 @@ function LD(tBody, c, a, fromDate, toDate) {
                         + '<td class="text-center">' + item.driverName + '</td>'
                         + '<td class="text-center">' + item.actualWeight + '</td>'
                         + '<td class="text-center">' + item.amount + '</td>'
+                        + '<td class="text-center">' + item.paymentTerm + '</td>'
                         + '<td class="text-center">'
                         + '<a href="#" class="btnPrint"><i class="fas fa-print"></i></a> | '
                         + '<a href="/' + c + '/Edit?Id=' + item.docId + '"><i class="fas fa-edit"></i></a> | '
@@ -49,8 +50,36 @@ function LD(tBody, c, a, fromDate, toDate) {
                     { "width": "8.33%" },
                     { "width": "8.33%" },
                     { "width": "8.33%" },
-                    { "width": "16.66%" },
-                ]
+                    { "width": "8.33%" },
+                    { "width": "8.33%" },
+                ],
+                footerCallback: function (row, data, start, end, display) {
+                    var api = this.api();
+
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function (i) {
+                        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                    };
+
+                    // Total over all pages
+                    total = api
+                        .column(7)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Total over this page
+                    pageTotal = api
+                        .column(7, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Update footer
+                    $(api.column(7).footer()).html('Rs.' + pageTotal + ' ( Rs.' + total + ' total)');
+                },
             });
             $('.loader').hide();
         },
